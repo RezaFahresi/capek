@@ -18,11 +18,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-file-invoice"></i>
-                    <p>Pesanan</p>
-                </a>
-            </li>
+            <li class="nav-item">
+    <a href="{{ route('member.transactions.create') }}"
+       class="nav-link {{ request()->routeIs('member.transactions.create') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-file-invoice"></i>
+        <p>Pesanan</p>
+    </a>
+</li>
             <li class="nav-item">
                 <a href="{{ route('member.transactions.index') }}"
                     class="nav-link {{ request()->routeIs('member.transactions*') ? 'active' : '' }}">

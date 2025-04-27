@@ -44,7 +44,7 @@
         </div>
     </div> --}}
     <footer class="text-end">
-        <span class="text-muted small text-end">Dicetak pada Surakarta, {{ date('d M Y') }}</span>
+        <span class="text-muted small text-end">Dicetak pada Banyuwangi, {{ date('d M Y') }}</span>
         {{-- <br>
         <br>
         <br>

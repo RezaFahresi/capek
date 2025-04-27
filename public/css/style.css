@@ -1,15 +1,19 @@
-/*!
- * Start Bootstrap - Busines Frontpage (https://startbootstrap.com/template-overviews/business-frontpage)
- * Copyright 2013-2019 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-business-frontpage/blob/master/LICENSE)
- */
+/* Start Bootstrap - Business Frontpage */
+
 body {
-    padding-top: 6rem; /* 56px 10rem*/
+    padding-top: 6rem;
     font-family: "Nunito", sans-serif;
+    background-color: #f8f9fa;
 }
 
 header {
-    height: 90vh;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    color: white;
 }
 
 .background-blur {
@@ -18,23 +22,99 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../../img/landing/home.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    /* filter: blur(2px); */ /*Sesuaikan nilai blur sesuai kebutuhan */
+    background: url("../../img/landing/home.png") no-repeat center center/cover;
+    filter: brightness(60%) blur(3px);
     z-index: -1;
 }
 
 .with-border {
     display: inline-block;
-    border-bottom: 5px solid rgb(255, 255, 255); /* Sesuaikan warna dan lebar garis sesuai kebutuhan */
+    border-bottom: 4px solid white;
+    padding-bottom: 5px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.with-border:hover {
+    border-color: #e0f2fe;
 }
 
 .bg-blue {
-    background-color: #19a564;
+    background-color: #667d7d;
+    color: white;
 }
 
 .kategori {
     overflow-x: auto;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.kategori-item {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, background 0.3s;
+    text-align: center;
+}
+
+.kategori-item:hover {
+    transform: scale(1.05);
+    background: #667d7d;
+}
+
+/* Styling untuk kartu */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 15px;
+    text-align: center;
+}
+
+.card-text {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Styling untuk bagian alamat dan kontak */
+.contact-section {
+    background: #667d7d;
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contact-section h2 {
+    border-bottom: 2px solid white;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.contact-section p {
+    margin: 5px 0;
+    font-size: 1rem;
 }

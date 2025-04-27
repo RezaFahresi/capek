@@ -8,9 +8,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{{ config('app.name', 'Laundry XYZ') }}</title>
-    <link href="{{ asset('/img/dashboard/favicon.png') }}" rel="icon" type="image/png">
-
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
@@ -35,7 +32,7 @@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark
     fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="">{{ config('app.name') }}</a>
+            <a class="navbar-brand" href="">Optimum Laundry</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -68,7 +65,7 @@
         <div class="container h-100">
             <div class="row h-100 align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-3 text-white mt-5 mb-2 with-border">@lang('landing.welcome')</h1>
+                    <h1 class="display-3 text-white mt-5 mb-2 with-border">@lang('Selamat Datang Di Laundry Optimum')</h1>
                     <p class="lead mb-5 text-white text-center">@lang('landing.tagline')</p>
                 </div>
                 {{-- <div class="col-lg-6">
@@ -171,6 +168,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-4 mb-2">
+                    <div class="card">
+                        <img src="{{ asset('img/landing/Shoes.jpg') }}" class="card-img-top" alt="">
+                        <div class="card-body d-none d-lg-block">
+                            <p class="card-text">Shoes & Bag Treatment</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 mb-2">
+                    <div class="card">
+                        <img src="{{ asset('img/landing/Sofa.jpg') }}" class="card-img-top" alt="">
+                        <div class="card-body d-none d-lg-block">
+                            <p class="card-text">Sofa & Springbed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 mb-2">
+                    <div class="card">
+                        <img src="{{ asset('img/landing/Baby.jpg') }}" class="card-img-top" alt="">
+                        <div class="card-body d-none d-lg-block">
+                            <p class="card-text">Baby Equipment</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -184,18 +205,17 @@
             <div class="row">
                 <div class="col-md-6 mb-4 mb-sm-0">
                     <h5>Alamat</h5>
-                    <p>Tipes, Kec. Serengan, Kota Surakarta, Jawa Tengah</p>
+                    <p>Taman Baru, Kec. Banyuwangi, Kabupaten Banyuwangi, Jawa Timur</p>
                     <br>
                     <h5>Kontak</h5>
-                    <p>cleanlaundry@gmail.com</p>
+                    <p>OptimumLaundry@gmail.com</p>
                     <p>(0361)123456</p>
-                    <p>081234567890</p>
+                    <p>085337370777</p>
                 </div>
                 <div class="col-md-6">
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.987975718024!2d110.80675027455068!3d-7.576286774840404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1677724790d5%3A0x8165748f42e56384!2sJl.%20Bhayangkara%2C%20Tipes%2C%20Kec.%20Serengan%2C%20Kota%20Surakarta%2C%20Jawa%20Tengah!5e0!3m2!1sid!2sid!4v1704006961476!5m2!1sid!2sid"
-                        width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen=""
-                        aria-hidden="false" tabindex="0"></iframe>
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3948.7843236669464!2d114.3622566!3d-8.2244317!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd15b4b494b5415%3A0xd0fcc574da45c1a7!2sOptimum%20Laundry%2CDry%20%26%20Wet%20Cleaning!5e0!3m2!1sid!2sid!4v1742561246275!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        
                 </div>
             </div>
         </div>
@@ -205,8 +225,8 @@
     <!-- Footer -->
     <footer class="py-5 bg-dark">
         <div class="container">
-            {{-- <p class="m-0 text-center text-white">Terima Kasih Telah Memilih {{ config('app.name') }} Sebagai
-                Kebersihan Pakaian Anda</p> --}}
+            <p class="m-0 text-center text-white">Terima Kasih Telah Memilih OptimumLaundry Sebagai
+                Kebersihan Pakaian Anda</p>
         </div>
         <!-- /.container -->
     </footer>

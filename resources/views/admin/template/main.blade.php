@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>{{ config('app.name') }} - Admin</title>
-    <link href="{{ asset('/img/dashboard/favicon.png') }}" rel="icon" type="image/png">
+    <!-- <title>{{ config('app.name') }} - Admin</title> -->
+    <!-- <link href="{{ asset('/img/dashboard/favicon.png') }}" rel="icon" type="image/png"> -->
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
@@ -33,7 +33,7 @@
             <!-- Brand Logo -->
             <a href="" class="brand-link mt-2">
                 <i class="fas fa-tshirt brand-image mt-1 ml-3"></i>
-                <h4 class="brand-text text-center">{{ config('app.name') }}</h4>
+                <h4 class="brand-text text-center">OptimumLaundry</h4>
             </a>
 
             <!-- Sidebar -->
