@@ -5,104 +5,154 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
-use App\Models\Item; // Import Item Model
-use App\Models\Service; // Import Service Model
-use App\Models\Category; // Import Category Model
+use App\Models\Item;
+use App\Models\Service;
+use App\Models\Category;
+use App\Models\ServiceType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TransactionController extends Controller
 {
     /**
-     * Method to show transactions history based on current logged on member
-     *
-     * @return \Illuminate\Contracts\View\View
+     * Menampilkan riwayat transaksi member yang login.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = Auth::user();
 
         if (!$user) {
-            abort(403);
+            abort(403, 'Unauthorized.');
         }
 
-        $transactions = Transaction::with('status')->where('member_id', $user->id)
-            ->orderBy('created_at', 'DESC')
-            ->orderBy('status_id', 'ASC')
+        $years = Transaction::selectRaw('YEAR(created_at) as year')
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
             ->get();
 
-        return view('member.transactions_history', compact('user', 'transactions'));
+        $currentYear = now()->year;
+        $currentMonth = now()->month;
+
+        $yearFilter = $request->input('year', $currentYear);
+        $monthFilter = $request->input('month', $currentMonth);
+
+        $transactions = Transaction::with('status')
+            ->where('member_id', $user->id)
+            ->whereYear('created_at', $yearFilter)
+            ->whereMonth('created_at', $monthFilter)
+            ->orderBy('created_at', 'desc')
+            ->orderBy('status_id', 'asc')
+            ->get();
+
+        return view('member.transactions_history', compact('user', 'transactions', 'years', 'currentYear', 'currentMonth'));
     }
 
     /**
-     * Method to show detail transaction
-     *
-     * @param  string|int $id
-     * @return \Illuminate\Contracts\View\View
+     * Menampilkan form untuk membuat transaksi baru.
      */
-    public function show(string|int $id): View
+    public function create(): View
     {
-        $user = Auth::user();
-        $transactions = TransactionDetail::where('transaction_id', $id)->get();
+        $items = Item::all();
+        $services = Service::all();
+        $categories = Category::all();
+        $serviceTypes = ServiceType::all();
 
-        return view('member.detail', compact('user', 'transactions', 'id'));
+        return view('member.transactions.create', compact('items', 'services', 'categories', 'serviceTypes'));
     }
 
-    public function create()
+    /**
+     * Menyimpan transaksi baru.
+     */
+    public function store(Request $request)
 {
-    $items = \App\Models\Item::all();
-    $services = \App\Models\Service::all();
-    $categories = \App\Models\Category::all();
-    
-    // Mengirimkan nilai default jika belum ada input sebelumnya
-    $selectedItem = old('item_id', 1);  // Default Baju
-    $selectedService = old('service_id', 1);  // Default Cuci
-    $selectedCategory = old('category_id', 1);  // Default Satuan
-    $quantity = old('quantity', 1);  // Default 1
+    $validatedData = $request->validate([
+        'item_id'          => 'required|exists:items,id',
+        'service_id'       => 'required|exists:services,id',
+        'category_id'      => 'required|exists:categories,id',
+        'service_type_id'  => 'required|exists:service_types,id',
+        'quantity'         => 'required|integer|min:1',
+        'payment_method'   => 'required|in:cash,transfer',
+        'bukti_transfer'   => 'required_if:payment_method,transfer|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
 
-    return view('member.transactions.create', compact('items', 'services', 'categories', 'selectedItem', 'selectedService', 'selectedCategory', 'quantity'));
+    $user = Auth::user();
+
+    // Ambil data item & service type
+    $item = Item::findOrFail($validatedData['item_id']);
+    $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
+    $quantity = $validatedData['quantity'];
+    $price = $item->price * $quantity;
+
+    // Buat transaksi baru
+    $transaction = new Transaction();
+    $transaction->member_id       = $user->id;
+    $transaction->status_id       = $validatedData['payment_method'] === 'transfer' ? 2 : 1; // 2 = Menunggu validasi
+    $transaction->payment_method  = $validatedData['payment_method'];
+    $transaction->created_by      = 'member';
+    $transaction->service_type_id = $validatedData['service_type_id'];
+    $transaction->service_cost    = $serviceType->cost;
+    $transaction->total           = $price + $serviceType->cost;
+    $transaction->payment_amount  = $transaction->total; // diasumsikan member membayar lunas saat input
+
+    // Simpan bukti transfer jika metode transfer
+    if ($request->hasFile('bukti_transfer')) {
+        $buktiPath = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
+        $transaction->bukti_transfer = $buktiPath;
+    }
+
+    $transaction->save();
+
+    // Simpan detail transaksi
+    $detail = new TransactionDetail();
+    $detail->transaction_id   = $transaction->id;
+    $detail->item_id          = $validatedData['item_id'];
+    $detail->service_id       = $validatedData['service_id'];
+    $detail->category_id      = $validatedData['category_id'];
+    $detail->service_type_id  = $validatedData['service_type_id'];
+    $detail->quantity         = $quantity;
+    $detail->price            = $price;
+    $detail->save();
+
+    return redirect()->route('member.transactions.index')
+        ->with('success', 'Pesanan berhasil ditambahkan!');
 }
 
-    
-
-    public function store(Request $request)
+    /**
+     * Menampilkan detail transaksi tertentu.
+     */
+    public function show($id): View
     {
-        // Validasi data yang diterima dari form
-        $validatedData = $request->validate([
-            'item_id' => 'required|exists:items,id',
-            'service_id' => 'required|exists:services,id',
-            'category_id' => 'required|exists:categories,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
-        // Ambil data pengguna yang sedang login
         $user = Auth::user();
 
-        // Buat transaksi baru
-        $transaction = new Transaction();
-        $transaction->member_id = $user->id;
-        $transaction->status_id = 1; // Set status to "Pending" or whatever status corresponds
-        $transaction->save();
+        $transactions = TransactionDetail::with(['item', 'service', 'category', 'serviceType'])
+            ->where('transaction_id', $id)
+            ->get();
 
-        // Hitung harga berdasarkan item, service, dan quantity
-        $item = Item::find($validatedData['item_id']);
-        $service = Service::find($validatedData['service_id']);
-        $category = Category::find($validatedData['category_id']);
-        
-        $price = $item->price * $validatedData['quantity']; // Price calculation logic
+        $items = Item::all();
+        $services = Service::all();
+        $categories = Category::all();
+        $serviceTypes = ServiceType::all();
 
-        // Buat detail transaksi
-        $detail = new TransactionDetail();
-        $detail->transaction_id = $transaction->id;
-        $detail->item_id = $validatedData['item_id'];
-        $detail->service_id = $validatedData['service_id'];
-        $detail->category_id = $validatedData['category_id'];
-        $detail->quantity = $validatedData['quantity'];
-        $detail->price = $price; // Set price based on item and quantity
-        $detail->save();
+        return view('member.transactions.create', compact('user', 'transactions', 'id', 'items', 'services', 'categories', 'serviceTypes'));
+    }
 
-        // Redirect to transaction index with success message
-        return redirect()->route('member.transactions.index')->with('success', 'Pesanan berhasil ditambahkan!');
+    /**
+     * Menghapus transaksi tertentu.
+     */
+    public function destroy($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+
+        // Hapus bukti transfer jika ada
+        if ($transaction->bukti_transfer && Storage::disk('public')->exists($transaction->bukti_transfer)) {
+            Storage::disk('public')->delete($transaction->bukti_transfer);
+        }
+
+        $transaction->delete();
+
+        return redirect()->route('member.transactions.index')
+            ->with('success', 'Transaksi berhasil dihapus!');
     }
 }

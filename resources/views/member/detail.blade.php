@@ -52,12 +52,18 @@
                                 </tbody>
                             </table>
                             <hr>
-                            <h5>Tipe Servis: {{ $transactions[0]->transaction->service_type->name }}</h5>
-                            <h5>Biaya Servis: {{ $transactions[0]->transaction->getFormattedServiceCost() }}</h5>
-                            <h5>Potongan: {{ $transactions[0]->transaction->discount }}</h5>
-                            <hr>
-                            <h4>Total Biaya: {{ $transactions[0]->transaction->getFormattedTotal() }}</h4>
-                            <h4>Dibayar: {{ $transactions[0]->transaction->getFormattedPaymentAmount() }}</h4>
+
+                            <!-- Check if there are transactions before accessing $transactions[0] -->
+                            @if($transactions->isNotEmpty())
+                                <h5>Tipe Servis: {{ $transactions[1]->transaction->service_type->name }}</h5>
+                                <h5>Biaya Servis: {{ $transactions[1]->transaction->getFormattedServiceCost() }}</h5>
+                                <h5>Potongan: {{ $transactions[1]->transaction->discount }}</h5>
+                                <hr>
+                                <h4>Total Biaya: {{ $transactions[1]->transaction->getFormattedTotal() }}</h4>
+                                <h4>Dibayar: {{ $transactions[1]->transaction->getFormattedPaymentAmount() }}</h4>
+                            @else
+                                <p>Data transaksi tidak tersedia.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

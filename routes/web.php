@@ -50,3 +50,7 @@ Route::group([
 
 // Set language route
 Route::get('/{locale}', LocaleController::class);
+
+Route::get('/member/transactions/create', [App\Http\Controllers\Member\MemberTransactionController::class, 'create'])->name('member.transactions.create');
+
+

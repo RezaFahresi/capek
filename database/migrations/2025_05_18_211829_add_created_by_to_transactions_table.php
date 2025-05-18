@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->integer('payment_amount')->default(0);
-        });
-
-        Schema::table('transactions', function (Blueprint $table) {
-        $table->enum('payment_method', ['cash', 'transfer'])->default('cash');
-        $table->string('bukti_transfer')->nullable();
+         Schema::table('transactions', function (Blueprint $table) {
+        $table->enum('created_by', ['admin', 'member'])->default('member')->after('member_id');
     });
     }
 
@@ -31,8 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('payment_amount');
+            //
         });
     }
-    
 };

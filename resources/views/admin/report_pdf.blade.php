@@ -25,30 +25,14 @@
         </div>
     </header>
     <br>
-    {{-- <div class="text-left">
-        <span class="text-muted small text-end">Dicetak pada Surakarta, {{ date('d M Y') }}</span>
-    </div> --}}
     <hr>
     <main>
         <p>Banyak transaksi: {{ $transactionsCount }} transaksi</p>
         <p>Total pendapatan: Rp {{ number_format($revenue, 0, ',', '.') }}</p>
     </main>
     <hr>
-    {{-- <div class="row mt-3">
-        <div class="col-4 text-end">
-            <p>Surakarta, {{ date('d F Y') }}</p>
-            <br>
-            <br>
-            <br>
-            <p></p>
-        </div>
-    </div> --}}
     <footer class="text-end">
         <span class="text-muted small text-end">Dicetak pada Banyuwangi, {{ date('d M Y') }}</span>
-        {{-- <br>
-        <br>
-        <br>
-        <p></p> --}}
     </footer>
 
 </body>

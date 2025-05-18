@@ -1,88 +1,153 @@
 @extends('member.template.main')
 
+@section('css')
+    <link href="{{ asset('vendor/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables-responsive/css/responsive.bootstrap4.min.css') }}" rel="stylesheet">
+@endsection
+
 @section('main-content')
 <div class="content-header">
     <div class="container-fluid">
-        <h1 class="m-0">Tambah Pesanan</h1>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">Tambah Pesanan</h1>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="content">
     <div class="container-fluid">
-        <form action="{{ route('member.transactions.store') }}" method="POST">
-            @csrf
+        <div class="row">
+            <div class="col-12">
 
-            <!-- Barang -->
-            <div class="form-group">
-                <label for="item">Barang</label>
-                <select name="item_id" id="item" class="form-control @error('item_id') is-invalid @enderror">
-                    <option value="1" {{ $selectedItem == 1 ? 'selected' : '' }}>Baju</option>
-                    <option value="2" {{ $selectedItem == 2 ? 'selected' : '' }}>Celana</option>
-                </select>
-                @error('item_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                @foreach (['error', 'warning', 'success'] as $msg)
+                    @if (session($msg))
+                        <div class="alert alert-{{ $msg }} alert-dismissible fade show" role="alert">
+                            {{ session($msg) }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+                @endforeach
+
+                <div class="card">
+                    <div class="card-body">
+                        <form id="form-transaksi" action="{{ route('member.transactions.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+
+                            {{-- Barang --}}
+                            <div class="form-group row">
+                                <label for="item_id" class="col-sm-2 col-form-label">Barang</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" id="item_id" name="item_id" required>
+                                        <option value="">-- Pilih Barang --</option>
+                                        @foreach ($items as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Servis --}}
+                            <div class="form-group row">
+                                <label for="service_id" class="col-sm-2 col-form-label">Servis</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" id="service_id" name="service_id" required>
+                                        <option value="">-- Pilih Servis --</option>
+                                        @foreach ($services as $service)
+                                            <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Kategori --}}
+                            <div class="form-group row">
+                                <label for="category_id" class="col-sm-2 col-form-label">Kategori</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" id="category_id" name="category_id" required>
+                                        <option value="">-- Pilih Kategori --</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Tipe Servis --}}
+                            <div class="form-group row">
+                                <label for="service_type_id" class="col-sm-2 col-form-label">Tipe Servis</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" id="service_type_id" name="service_type_id" required>
+                                        <option value="">-- Pilih Tipe Servis --</option>
+                                        @foreach ($serviceTypes as $type)
+                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Quantity --}}
+                            <div class="form-group row">
+                                <label for="quantity" class="col-sm-2 col-form-label">Banyak</label>
+                                <div class="col-sm-2">
+                                    <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+                                </div>
+                            </div>
+
+                            {{-- Metode Pembayaran --}}
+                            <div class="form-group row">
+                                <label for="payment_method" class="col-sm-2 col-form-label">Metode Pembayaran</label>
+                                <div class="col-sm-4">
+                                    <select class="form-control" id="payment_method" name="payment_method" required>
+                                        <option value="">-- Pilih Metode --</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="transfer">Transfer</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Bukti Transfer --}}
+                            <div class="form-group row" id="bukti_transfer_group" style="display: none;">
+                                <label for="bukti_transfer" class="col-sm-2 col-form-label">Bukti Transfer</label>
+                                <div class="col-sm-4">
+                                    <input type="file" class="form-control-file" name="bukti_transfer" id="bukti_transfer" accept="image/*">
+                                </div>
+                            </div>
+
+                            <div class="form-group row mt-4">
+                                <div class="col-sm-6 offset-sm-2">
+                                    <button type="submit" class="btn btn-success">Simpan Pesanan</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- Servis -->
-            <div class="form-group">
-                <label for="service">Servis</label>
-                <select name="service_id" id="service" class="form-control @error('service_id') is-invalid @enderror">
-                    <option value="1" {{ $selectedService == 1 ? 'selected' : '' }}>Cuci</option>
-                    <option value="2" {{ $selectedService == 2 ? 'selected' : '' }}>Setrika</option>
-                </select>
-                @error('service_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Kategori -->
-            <div class="form-group">
-                <label for="category">Kategori</label>
-                <select name="category_id" id="category" class="form-control @error('category_id') is-invalid @enderror">
-                    <option value="1" {{ $selectedCategory == 1 ? 'selected' : '' }}>Satuan</option>
-                    <option value="2" {{ $selectedCategory == 2 ? 'selected' : '' }}>Kiloan</option>
-                </select>
-                @error('category_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Jumlah -->
-            <div class="form-group">
-                <label for="quantity">Banyak</label>
-                <input type="number" name="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror"
-                    min="1" value="{{ $quantity ?? 1 }}">
-                @error('quantity')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Simpan Pesanan</button>
-        </form>
+        </div>
     </div>
 </div>
 @endsection
 
-@section('script')
-<script>
-    $(document).ready(function() {
-        // Initialize Select2 for the item, service, and category dropdowns
-        $('#item').select2({
-            placeholder: 'Pilih Barang',
-            allowClear: true
-        });
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const metode = document.getElementById('payment_method');
+            const buktiGroup = document.getElementById('bukti_transfer_group');
+            const buktiInput = document.getElementById('bukti_transfer');
 
-        $('#service').select2({
-            placeholder: 'Pilih Servis',
-            allowClear: true
+            metode.addEventListener('change', function () {
+                if (this.value === 'transfer') {
+                    buktiGroup.style.display = 'flex';
+                    buktiInput.required = true;
+                } else {
+                    buktiGroup.style.display = 'none';
+                    buktiInput.required = false;
+                }
+            });
         });
-
-        $('#category').select2({
-            placeholder: 'Pilih Kategori',
-            allowClear: true
-        });
-    });
-</script>
+    </script>
 @endsection
